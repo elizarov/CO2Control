@@ -6,6 +6,9 @@ public:
   void setup();
   void update();
   bool isActive();
+private:
+  int progress = -1;
+  bool connected = false;
 };
 
 extern OTA ota;

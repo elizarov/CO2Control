@@ -4,29 +4,39 @@
 #include <ArduinoOTA.h>
 
 #include "OTA.h"
+#include "Blink.h"
 
 OTA ota;
 
-int progress = -1;
-
 void OTA::setup() {
-  ArduinoOTA.onStart([]() {
+  ArduinoOTA.onStart([&]() {
     progress = 0;
+    blink.update();
   });
-  ArduinoOTA.onEnd([]() {
+  ArduinoOTA.onEnd([&]() {
     progress = -1;
+    blink.update();
   });
-  ArduinoOTA.onProgress([](unsigned int done, unsigned int total) {
+  ArduinoOTA.onProgress([&](unsigned int done, unsigned int total) {
     progress = ((unsigned long)done * 100) / total;
+    blink.update();
   });
-  ArduinoOTA.onError([](ota_error_t error) {
+  ArduinoOTA.onError([&](ota_error_t error) {
     progress = -1;
+    blink.update();
+    ESP.restart();
   });
-  ArduinoOTA.begin();
 }
 
 void OTA::update() {
-  ArduinoOTA.handle();  
+  if (connected) {
+    ArduinoOTA.handle();      
+  } else {
+    if (WiFi.waitForConnectResult() == WL_CONNECTED) {
+      connected = true;
+      ArduinoOTA.begin();
+    }
+  }
 }
 
 bool OTA::isActive() {
