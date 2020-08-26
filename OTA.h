@@ -5,9 +5,8 @@ class OTA {
 public:
   void setup();
   void update();
-  bool isActive();
+  bool active;
 private:
-  int progress = -1;
   bool connected = false;
 };
 

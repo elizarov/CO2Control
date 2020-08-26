@@ -9,9 +9,8 @@ class Network {
 public:
   char packet[MAX_PACKET_SIZE + 1]; // last received packet
   void setup();
+  void update();
   bool receiveMcast();                    
-  uint8_t level(); // 0-4
-  int16_t addr(); // last byte or -1
 };
 
 extern Network network;

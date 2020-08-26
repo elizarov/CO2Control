@@ -13,5 +13,5 @@ const unsigned long BLINK_OTA = 100;
 BlinkLed blinkLed(LED_BUILTIN);
 
 void Blink::update() {
-  blinkLed.blink(ota.isActive() ? BLINK_OTA : BLINK_NORMAL);
+  blinkLed.blink(ota.active ? BLINK_OTA : BLINK_NORMAL);
 }

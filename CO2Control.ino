@@ -19,6 +19,7 @@ void setup() {
 
 void loop() {
   blink.update();
+  network.update();
   web.update();
   ota.update();
   if (sensors.update()) {
