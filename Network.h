@@ -1,5 +1,4 @@
-#ifndef _NETWORK_H
-#define _NETWORK_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -14,5 +13,3 @@ public:
 };
 
 extern Network network;
-
-#endif

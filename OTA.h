@@ -1,5 +1,4 @@
-#ifndef _OTA_H
-#define _OTA_H
+#pragma once
 
 class OTA {
 public:
@@ -11,5 +10,3 @@ private:
 };
 
 extern OTA ota;
-
-#endif

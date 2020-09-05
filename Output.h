@@ -1,5 +1,4 @@
-#ifndef _OUTPUT_H
-#define _OUTPUT_H
+#pragma once
 
 #include <Arduino.h>
 #include <FixNum.h>
@@ -18,5 +17,3 @@ private:
 };
 
 extern Output output;
-
-#endif

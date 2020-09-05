@@ -1,5 +1,4 @@
-#ifndef _SENSORS_H
-#define _SENSORS_H
+#pragma once
 
 #include <Arduino.h>
 #include <FixNum.h>
@@ -21,5 +20,3 @@ public:
 };
 
 extern Sensors sensors;
-
-#endif

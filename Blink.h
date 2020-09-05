@@ -1,5 +1,4 @@
-#ifndef _BLINK_H
-#define _BLINK_H
+#pragma once
 
 class Blink {
 public:
@@ -8,4 +7,3 @@ public:
 
 extern Blink blink;
 
-#endif
