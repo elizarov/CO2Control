@@ -1,7 +1,7 @@
 #include "Sensors.h"
 #include "Network.h"
 
-const unsigned long TIMEOUT = 60000; // 1 min
+const unsigned long REMOVE_TIMEOUT = 60000; // 1 min
 
 Sensors sensors;
 
@@ -9,7 +9,7 @@ bool Sensors::update() {
   bool removed = false;
   unsigned long now = millis();
   for (auto it = dataMap.cbegin(); it != dataMap.cend(); ) {
-    if ((now - it->second.lastUpdate) > TIMEOUT ) {
+    if ((now - it->second.lastUpdate) > REMOVE_TIMEOUT ) {
       dataMap.erase(it++);
       removed = true;
     } else {
@@ -23,7 +23,9 @@ bool Sensors::update() {
   while (*cur != 0 && *cur != ']' && *cur != ':') cur++;
   if (*cur != ':') return removed;
   *cur = 0;
-  Data& data = dataMap[String(start)];
+  String nodeId(start);
+  Data& data = dataMap[nodeId];
+  data.init(nodeId);
   data.lastUpdate = now;
   data.co2ppm.clear();
   data.temp.clear();
@@ -43,6 +45,7 @@ bool Sensors::update() {
       case 'h': data.hum = parser; break;
     }
   }
+  data.pushData();
   return true;
 }
 
@@ -52,4 +55,21 @@ fixnum16_0 Sensors::maxCO2ppm(fixnum16_0 ppmBase) {
     if (data.co2ppm > ppmBase) ppmBase = data.co2ppm;
   }
   return ppmBase;
+}
+
+// --- Data --- 
+
+String PREFIX = "C";
+
+void Data::init(String nodeId) {
+  String tag = PREFIX + nodeId;
+  if (!co2ppmTag) co2ppmTag = pushTag(tag + 'c');
+  if (!tempTag) tempTag = pushTag(tag + 't');
+  if (!humTag) humTag = pushTag(tag + 'h');
+}
+
+void Data::pushData() const {
+  push(co2ppmTag, co2ppm);
+  push(tempTag, temp);
+  push(humTag, hum);
 }
