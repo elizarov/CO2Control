@@ -4,23 +4,30 @@
 #include <ArduinoOTA.h>
 
 #include "OTA.h"
-#include "Blink.h"
+#include "Display.h"
 
 OTA ota;
 
 void OTA::setup() {
   ArduinoOTA.onStart([&]() {
-    active = true;
-    blink.update();
+    status = OTA_ACTIVE;
+    progress = 0;
+    display.update();
   });
   ArduinoOTA.onEnd([&]() {
-    blink.update();
+    status = OTA_DONE;
+    display.update();
   });
   ArduinoOTA.onProgress([&](unsigned int done, unsigned int total) {
-    blink.update();
+    int newProgress = ((unsigned long)done * 100) / total;
+    if (newProgress != progress) {
+      progress = newProgress;
+      display.update();
+    }
   });
   ArduinoOTA.onError([&](ota_error_t error) {
-    blink.update();
+    status = OTA_ERROR;
+    display.update();
     ESP.restart();
   });
 }

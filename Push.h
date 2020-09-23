@@ -42,6 +42,8 @@ protected:
 public:
   PushDest(byte mask, char* host, int port, char* url, char* auth);
   void check();
+  bool isSending();
+  long remaining();
 };
 
 const long MAX_COOKIE_LEN = 20;
@@ -69,10 +71,22 @@ public:
 extern PushDest haworks_data;
 // extern PushMsgDest haworks_message; // todo: no messages now
 
-PushItem* pushTag(const String& tag); // get or create new item with a given tag
-void push(PushItem* item, int32_t val, prec_t prec);
-void checkPush();
+class Push {
+private:
+  bool _wasSending;
+public:
+  PushItem* newTag(const String& tag); // get or create new item with a given tag
+  void put(PushItem* item, int32_t val, prec_t prec);
+  
+  bool update();
+  bool isSending();
+  uint16_t remaining(uint16_t max); 
 
-template<typename T, prec_t prec> void push(PushItem* item, FixNum<T, prec> val) {
-  if (val.valid()) push(item, val.mantissa(), prec);
+  template<typename T, prec_t prec> void put(PushItem* item, FixNum<T, prec> val);
+};
+
+extern Push push;
+
+template<typename T, prec_t prec> void Push::put(PushItem* item, FixNum<T, prec> val) {
+  if (val.valid()) put(item, val.mantissa(), prec);
 }

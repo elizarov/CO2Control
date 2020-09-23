@@ -59,6 +59,8 @@ const int PBODY_STATE_ERR   = 6;  // error
 
 const int MAX_RESPONSE = 300;
 
+Push push;
+
 WiFiClient client;
 bool clientBusy;
 
@@ -246,6 +248,14 @@ void PushDest::check() {
     doneSend(false);
 }
 
+bool PushDest::isSending() {
+  return _sending;  
+}
+
+long PushDest::remaining() {
+  return _period.remaining();
+}
+
 PushMsgDest::PushMsgDest(byte mask, char* host, int port, char* url, char* auth) :
     PushDest(mask, host, port, url, auth)
 {
@@ -375,12 +385,25 @@ void PushMsgDest::check() {
     doneSend(false);
 }
 
-void checkPush() {
-  haworks_data.check();
+bool Push::update() {
   //haworks_message.check(); // todo: upload messages, too
+  haworks_data.check();
+  // return true when sending != wasSending
+  bool wasSending = _wasSending;
+  bool sending = isSending();
+  _wasSending = sending;
+  return sending != wasSending;
 }
 
-PushItem* pushTag(const String& tag) {
+bool Push::isSending() {
+  return haworks_data.isSending();
+}
+
+uint16_t Push::remaining(uint16_t max) {
+  return haworks_data.remaining() * max / NEXT_INTERVAL;
+}
+
+PushItem* Push::newTag(const String& tag) {
   for (PushItem* cur = last_item; cur != nullptr; cur = cur->next) {
     if (cur->tag == tag) return cur;
   }
@@ -389,7 +412,7 @@ PushItem* pushTag(const String& tag) {
   return item;
 }
 
-void push(PushItem* item, int32_t val, byte prec) {
+void Push::put(PushItem* item, int32_t val, byte prec) {
   item->val = val;
   item->prec = prec;
   item->updated = MASK_ALL;

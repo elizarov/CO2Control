@@ -8,7 +8,7 @@ class Network {
 public:
   char packet[MAX_PACKET_SIZE + 1]; // last received packet
   void setup();
-  void update();
+  bool update();
   bool receiveMcast();                    
 };
 

@@ -52,7 +52,7 @@ bool Sensors::update() {
 fixnum16_0 Sensors::maxCO2ppm(fixnum16_0 ppmBase) {
   for (const auto& kv : dataMap) {
     const Data& data = kv.second;
-    if (data.co2ppm > ppmBase) ppmBase = data.co2ppm;
+    if (!ppmBase.valid() || data.co2ppm > ppmBase) ppmBase = data.co2ppm;
   }
   return ppmBase;
 }
@@ -63,13 +63,13 @@ String PREFIX = "C";
 
 void Data::init(String nodeId) {
   String tag = PREFIX + nodeId;
-  if (!co2ppmTag) co2ppmTag = pushTag(tag + 'c');
-  if (!tempTag) tempTag = pushTag(tag + 't');
-  if (!humTag) humTag = pushTag(tag + 'h');
+  if (!co2ppmTag) co2ppmTag = push.newTag(tag + 'c');
+  if (!tempTag) tempTag = push.newTag(tag + 't');
+  if (!humTag) humTag = push.newTag(tag + 'h');
 }
 
 void Data::pushData() const {
-  push(co2ppmTag, co2ppm);
-  push(tempTag, temp);
-  push(humTag, hum);
+  push.put(co2ppmTag, co2ppm);
+  push.put(tempTag, temp);
+  push.put(humTag, hum);
 }

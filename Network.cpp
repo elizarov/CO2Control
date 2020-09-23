@@ -22,7 +22,7 @@ void Network::setup() {
   networkTimeout.reset(NETWORK_TIMEOUT);
 }
 
-void Network::update() {
+bool Network::update() {
   bool isConnected = WiFi.status() == WL_CONNECTED;
   if (!isConnected) {
     if (wasConnected) {
@@ -32,7 +32,9 @@ void Network::update() {
       ESP.reset();
     }
   }
+  if (wasConnected == isConnected) return false;
   wasConnected = isConnected;
+  return true;
 }
 
 bool Network::receiveMcast() {
