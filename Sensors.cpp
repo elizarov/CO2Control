@@ -1,7 +1,7 @@
 #include "Sensors.h"
 #include "Network.h"
 
-const unsigned long REMOVE_TIMEOUT = 60000; // 1 min
+const unsigned long REMOVE_TIMEOUT = 3 * 60000; // 3 min
 
 Sensors sensors;
 
@@ -31,7 +31,7 @@ bool Sensors::update() {
   data.temp.clear();
   data.hum.clear();
   cur++;
-  FixNumParser<int16_t> parser;
+  FixNumParser<int32_t> parser;
   while (*cur != 0 && *cur != ']') {
     start = cur;
     if (*cur != 0 && *cur != ']' && *cur != '+' && *cur != '-' && *cur != '.' && (*cur < '0' || *cur > '9')) cur++;
@@ -43,6 +43,8 @@ bool Sensors::update() {
       case 'c': data.co2ppm = parser; break;
       case 't': data.temp = parser; break;
       case 'h': data.hum = parser; break;
+      case 'r': data.rssi = parser; break;
+      case 'u': data.uptime = parser; break;
     }
   }
   data.pushData();

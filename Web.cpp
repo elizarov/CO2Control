@@ -41,6 +41,7 @@ void handleMain() {
   m += F("<pre>\n");
   m += F("------ Sensors\n");
   fixnum16_0 maxCO2ppm = sensors.maxCO2ppm(fixnum16_0(0));
+  unsigned long now = millis();
   for (auto const& kv : sensors.dataMap) {
     char buf[NAME_LEN + 1];
     memset(buf, ' ', NAME_LEN);
@@ -55,8 +56,14 @@ void handleMain() {
     m += F(" ppm  ");
     m += data.temp.format(5, FMT_RIGHT | 1);
     m += F(" C  ");
-    m += data.hum.format(3, FMT_RIGHT);
-    m += F("%\n");
+    m += data.hum.format(2, FMT_RIGHT);
+    m += F("%  ");
+    m += data.rssi.format(3, FMT_RIGHT);
+    m += F(" dBm  ");
+    m += fixnum32_0((now - data.lastUpdate) / 1000).format(5, FMT_RIGHT);
+    m += F("s ago  ");
+    m += data.uptime.format(10, FMT_RIGHT);
+    m += F(" uptime\n");
   }
   m += '\n';
   m += F("------ Output\n");

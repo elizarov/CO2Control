@@ -12,6 +12,8 @@ struct Data {
   fixnum16_0 co2ppm;
   fixnum16_1 temp;
   fixnum16_0 hum;
+  fixnum16_0 rssi;
+  fixnum32_0 uptime;
 
 private: 
   void init(String nodeId);
