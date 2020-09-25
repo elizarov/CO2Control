@@ -6,6 +6,7 @@
 #include <ESP8266WiFi.h>
 
 #include <Timeout.h>
+#include <DrawRSSI.h>
 
 #include "Sensors.h"
 #include "OTA.h"
@@ -79,6 +80,7 @@ void displaySensors() {
     d.print(":");
     d.setCursor(95, y);
     d.print(data.co2ppm.format());
+    if (data.rssi.valid()) drawRSSI(d, 117, y, data.rssi.mantissa(), WHITE);
     y += 8;
   }
   // Push
@@ -90,16 +92,6 @@ void displaySensors() {
   if (display.blinkState) { 
     d.fillCircle(2, 3, 2, WHITE);
   }
-}
-
-// RSSI level from 0 to 8
-uint8_t getLevel() {
-  int rssi = WiFi.RSSI();
-  // -75 -> 1; -70 -> 2; ... ; -40 -> 8
-  int level = (rssi + 80) / 5;
-  if (level < 0) return 0;
-  if (level > 8) return 8;
-  return level; 
 }
 
 void displayOTA() {
@@ -136,12 +128,7 @@ void Display::update() {
     }
 
     // RSSI Level
-    uint8_t level = getLevel();
-    for (uint8_t i = 1; i <= level; i++) {
-      uint16_t x = 116 + i + ((i - 1) / 2);
-      uint16_t h = (i + 1) & 0xfe;
-      d.drawLine(x, 7, x, 8 - h, WHITE);
-    }
+    drawRSSI(d, 117, 0, WiFi.RSSI(), WHITE);
   }
 
   d.display();
